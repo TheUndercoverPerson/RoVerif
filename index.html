@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Profile Checker</title>
+</head>
+<body>
+    <h1>Roblox Profile Checker</h1>
+    <form id="usernameForm">
+        <label for="username">Enter Your Roblox Username:</label><br>
+        <input type="text" id="username" name="username"><br><br>
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <div id="result" style="display:none;">
+        <p>Generated String:</p>
+        <textarea id="generatedString" readonly></textarea><br>
+        <button id="copyBtn">Copy to Clipboard</button><br><br>
+        <p id="verifyResult"></p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
