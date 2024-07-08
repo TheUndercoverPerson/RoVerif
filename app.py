@@ -1,49 +1,53 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 import requests
-import random
-import string
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Change this to a secure random key
 
-# Route to render index.html template
+ROBLOX_API_URL = 'https://api.roblox.com'
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Route to generate a random string
-@app.route('/generate', methods=['POST'])
-def generate():
-    if request.method == 'POST':
-        username = request.form['username']
-        random_string = generate_random_string()
-        return jsonify({'random_string': random_string})
 
-# Route to verify the string in Roblox profile description
 @app.route('/verify', methods=['POST'])
 def verify():
-    if request.method == 'POST':
-        username = request.form['username']
-        roblox_username = request.form['roblox_username']
-        success = verify_description(username, roblox_username)
-        return jsonify({'success': success})
+    username = request.form['username']
+    
+    # Fetch user data from Roblox API
+    user_data = fetch_user_data(username)
+    
+    if user_data:
+        # Generate a verification token (you can use a more secure method)
+        verification_token = '123456'  # Change this to a secure method
+        
+        # Send verification token to user's Roblox account (simulate here)
+        send_verification_to_roblox(username, verification_token)
+        
+        # Render the verify template with username and token
+        return render_template('verify.html', username=username, token=verification_token)
+    else:
+        flash('User not found. Please enter a valid Roblox username.', 'error')
+        return redirect(url_for('index'))
 
-def generate_random_string():
-    characters = string.ascii_letters + string.digits + '⚡🎮🎯'
-    return ''.join(random.choice(characters) for _ in range(20))
 
-def verify_description(username, roblox_username):
-    api_url = f'https://api.roblox.com/users/get-by-username?username={roblox_username}'
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        user_data = response.json()
-        if 'Id' in user_data:
-            user_id = user_data['Id']
-            profile_url = f'https://www.roblox.com/users/{user_id}/profile'
-            profile_response = requests.get(profile_url)
-            if profile_response.status_code == 200:
-                profile_data = profile_response.text
-                return username.lower() in profile_data.lower()
-    return False
+def fetch_user_data(username):
+    try:
+        response = requests.get(f'{ROBLOX_API_URL}/users/get-by-username?username={username}')
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except requests.exceptions.RequestException:
+        return None
+
+
+def send_verification_to_roblox(username, token):
+    # Simulate sending token to user's Roblox account (replace with actual implementation)
+    print(f'Sending verification token {token} to {username}')
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=4000)
+    app.run(debug=True)
