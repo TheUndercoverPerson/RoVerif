@@ -1,46 +1,57 @@
 $(document).ready(function() {
+    // Handle form submission to generate random string
     $('#usernameForm').submit(function(event) {
         event.preventDefault();
         var username = $('#username').val();
+
         $.ajax({
             type: 'POST',
             url: '/generate',
-            data: {username: username},
+            data: { username: username },
             success: function(response) {
                 $('#generatedString').val(response.random_string);
                 $('#result').show();
-            },
-            error: function(error) {
-                console.log(error);
             }
         });
     });
 
-    $('#copyBtn').click(function() {
-        var copyText = document.getElementById("generatedString");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); /* For mobile devices */
-        document.execCommand("copy");
-        alert("Copied the text: " + copyText.value);
+    // Handle click event for "Search Profile" button
+    $('#searchProfileBtn').click(function() {
+        var username = $('#username').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/get_user_id',
+            data: { username: username },
+            success: function(response) {
+                console.log('UserID:', response.user_id);
+                // Call function to verify the generated string in profile description
+                verifyProfile(username, response.user_id);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
     });
 
-    $('#verifyBtn').click(function() {
-        var username = $('#username').val();
-        var robloxUsername = $('#robloxUsername').val();
+    // Function to verify the generated string in profile description
+    function verifyProfile(username, userId) {
+        var generatedString = $('#generatedString').val();
+
         $.ajax({
             type: 'POST',
             url: '/verify',
-            data: {username: username, roblox_username: robloxUsername},
+            data: { username: username, roblox_username: userId }, // Sending userID instead of username
             success: function(response) {
                 if (response.success) {
-                    $('#verifyResult').text('Success! The string was found in your Roblox profile description.');
+                    $('#verifyResult').text('String found in profile description! Success!');
                 } else {
-                    $('#verifyResult').text('The string was not found in your Roblox profile description.');
+                    $('#verifyResult').text('String not found in profile description.');
                 }
             },
-            error: function(error) {
-                console.log(error);
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
             }
         });
-    });
+    }
 });
