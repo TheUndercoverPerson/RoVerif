@@ -2,13 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import requests
 import random
 import string
-from bs4 import BeautifulSoup
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Change this to a secure random key
+app.secret_key = 'awdnaeinfuwedsifneowiqnduaewifknaweinduiqwdnuqwk983rhf87weAOHDN8Q7HFNNFW8WOAFMW8AHJFN8729wh3nr73qer7AHDB7FQEIFWN7Waodneyfiawiebf7q24FVB7WA'  # Change this to a secure random key
 
 API_ENDPOINT = "https://users.roblox.com/v1/usernames/users"
-PROFILE_URL_TEMPLATE = "https://www.roblox.com/users/{user_id}/profile"
+DESCRIPTION_ENDPOINT = "https://users.roblox.com/v1/users/{user_id}/description"
 
 
 @app.route('/')
@@ -53,10 +52,9 @@ def check_verification():
         flash('Verification session expired. Please try again.', 'error')
         return redirect(url_for('index'))
 
-    profile_url = PROFILE_URL_TEMPLATE.format(user_id=user_id)
-    profile_content = fetch_profile_content(profile_url)
+    description = fetch_profile_description(user_id)
     
-    if stored_token in profile_content:
+    if stored_token in description:
         flash(f'Verification successful for user: {username}', 'success')
     else:
         flash('Verification failed. Please ensure the token is added to your profile and try again.', 'error')
@@ -79,17 +77,16 @@ def fetch_user_id(username):
         return None
 
 
-def generate_random_token(length=6):
+def generate_random_token(length=15):
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for i in range(length))
 
 
-def fetch_profile_content(profile_url):
+def fetch_profile_description(user_id):
     try:
-        response = requests.get(profile_url)
+        response = requests.get(DESCRIPTION_ENDPOINT.format(user_id=user_id))
         if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            return soup.get_text()
+            return response.json().get('description', '')
         else:
             return ""
     except requests.exceptions.RequestException:
@@ -97,4 +94,4 @@ def fetch_profile_content(profile_url):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=4000)
+    app.run(debug=True)
