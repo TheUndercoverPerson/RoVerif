@@ -18,30 +18,12 @@ $(document).ready(function() {
     // Handle click event for "Search Profile" button
     $('#searchProfileBtn').click(function() {
         var username = $('#username').val();
-
-        $.ajax({
-            type: 'POST',
-            url: '/get_user_id',
-            data: { username: username },
-            success: function(response) {
-                console.log('UserID:', response.user_id);
-                // Call function to verify the generated string in profile description
-                verifyProfile(username, response.user_id);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    });
-
-    // Function to verify the generated string in profile description
-    function verifyProfile(username, userId) {
         var generatedString = $('#generatedString').val();
 
         $.ajax({
             type: 'POST',
             url: '/verify',
-            data: { username: username, roblox_username: userId }, // Sending userID instead of username
+            data: { username: username, roblox_username: generatedString }, // Sending generatedString as roblox_username
             success: function(response) {
                 if (response.success) {
                     $('#verifyResult').text('String found in profile description! Success!');
@@ -53,5 +35,5 @@ $(document).ready(function() {
                 console.error('Error:', error);
             }
         });
-    }
+    });
 });
