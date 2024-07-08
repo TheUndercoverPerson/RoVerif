@@ -17,13 +17,24 @@
         <button type="submit" id="submitBtn">Submit</button>
     </form>
 
+    <button id="copyBtn">Copy to Clipboard</button><br><br>
     <button id="searchProfileBtn">Search Profile</button><br><br>
 
     <div id="result" style="display:none;">
         <p>Generated String:</p>
         <textarea id="generatedString" readonly></textarea><br>
-        <button id="copyBtn">Copy to Clipboard</button><br><br>
         <p id="verifyResult"></p>
     </div>
+
+    <script>
+        // Function to copy generated string to clipboard
+        document.getElementById("copyBtn").addEventListener("click", function() {
+            var copyText = document.getElementById("generatedString");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+            document.execCommand("copy");
+            alert("Copied the text: " + copyText.value);
+        });
+    </script>
 </body>
 </html>
