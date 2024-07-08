@@ -1,15 +1,16 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 import requests
 import random
 import string
-import json
 
 app = Flask(__name__)
 
+# Route to render index.html template
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# Route to generate a random string
 @app.route('/generate', methods=['POST'])
 def generate():
     if request.method == 'POST':
@@ -17,6 +18,7 @@ def generate():
         random_string = generate_random_string()
         return jsonify({'random_string': random_string})
 
+# Route to verify the string in Roblox profile description
 @app.route('/verify', methods=['POST'])
 def verify():
     if request.method == 'POST':
