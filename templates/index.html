@@ -7,10 +7,10 @@
 </head>
 <body>
     <h1>Roblox Verification</h1>
-    <form action="/verify" method="post">
+    <form id="form1" action="/verify" method="post">
         <label for="username">Enter your Roblox username:</label><br>
         <input type="text" id="username" name="username" required><br><br>
-        <button type="submit">Verify</button>
+        <button type="submit" id="sub">Verify</button>
     </form>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -19,5 +19,13 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
+    <script>
+         document.getElementById('sub').addEventListener('click', function(event) {
+            event.preventDefault();
+            setTimeout(function() {
+                document.getElementById('form1').submit();
+            }, 1000);  // 1 second delay
+        });
+    </script>
 </body>
 </html>
