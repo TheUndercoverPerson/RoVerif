@@ -18,14 +18,6 @@ def generate():
         random_string = generate_random_string()
         return jsonify({'random_string': random_string})
 
-# Route to get user ID by username
-@app.route('/get_user_id', methods=['POST'])
-def get_user_id():
-    if request.method == 'POST':
-        username = request.form['username']
-        user_id = find_user_id(username)
-        return jsonify({'user_id': user_id})
-
 # Route to verify the string in Roblox profile description
 @app.route('/verify', methods=['POST'])
 def verify():
@@ -38,15 +30,6 @@ def verify():
 def generate_random_string():
     characters = string.ascii_letters + string.digits + '⚡🎮🎯'
     return ''.join(random.choice(characters) for _ in range(20))
-
-def find_user_id(username):
-    api_url = f'https://api.roblox.com/users/get-by-username?username={username}'
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        user_data = response.json()
-        if 'Id' in user_data:
-            return user_data['Id']
-    return None
 
 def verify_description(username, roblox_username):
     api_url = f'https://api.roblox.com/users/get-by-username?username={roblox_username}'
