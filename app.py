@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import requests
 import random
 import string
+import time  # For delaying redirect
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Change this to a secure random key
@@ -38,7 +39,7 @@ def verify():
         # Print debugging information
         print(f"Debug Info: Username: {username}, User ID: {user_id}, Verification Token: {verification_token}")
         
-        # Render the verify template with username and token
+        # Store verification token in localStorage
         return render_template('verify.html', username=username, token=verification_token)
     else:
         flash('User not found or banned. Please enter a valid Roblox username.', 'error')
@@ -62,10 +63,11 @@ def check_verification():
     
     if stored_token in description:
         flash(f'Verification successful for user: {username}', 'success')
+        # Store verification code in localStorage
+        return render_template('success.html', username=username)
     else:
         flash('Verification failed. Please ensure the token is added to your profile and try again.', 'error')
-    
-    return redirect(url_for('index'))
+        return redirect(url_for('index'))
 
 
 def fetch_user_id(username):
