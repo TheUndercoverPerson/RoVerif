@@ -4,7 +4,7 @@ import random
 import string
 
 app = Flask(__name__)
-app.secret_key = 'awdnaeinfuwedsifneowiqnduaewifknaweinduiqwdnuqwk983rhf87weAOHDN8Q7HFNNFW8WOAFMW8AHJFN8729wh3nr73qer7AHDB7FQEIFWN7Waodneyfiawiebf7q24FVB7WA'  # Change this to a secure random key
+app.secret_key = 'your_secret_key'  # Change this to a secure random key
 
 API_ENDPOINT = "https://users.roblox.com/v1/usernames/users"
 DESCRIPTION_ENDPOINT = "https://users.roblox.com/v1/users/{user_id}/description"
@@ -35,6 +35,9 @@ def verify():
         session['username'] = username
         session['user_id'] = user_id
         
+        # Print debugging information
+        print(f"Debug Info: Username: {username}, User ID: {user_id}, Verification Token: {verification_token}")
+        
         # Render the verify template with username and token
         return render_template('verify.html', username=username, token=verification_token)
     else:
@@ -54,6 +57,9 @@ def check_verification():
 
     description = fetch_profile_description(user_id)
     
+    # Print debugging information
+    print(f"Debug Info: Stored Token: {stored_token}, Description: {description}, User ID: {user_id}")
+    
     if stored_token in description:
         flash(f'Verification successful for user: {username}', 'success')
     else:
@@ -70,14 +76,17 @@ def fetch_user_id(username):
     try:
         response = requests.post(API_ENDPOINT, json=request_payload)
         if response.status_code == 200 and response.json()["data"]:
-            return response.json()["data"][0]["id"]
+            user_id = response.json()["data"][0]["id"]
+            print(f"Debug Info: Fetched User ID: {user_id} for Username: {username}")
+            return user_id
         else:
             return None
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
+        print(f"Debug Info: Request Exception: {e}")
         return None
 
 
-def generate_random_token(length=15):
+def generate_random_token(length=6):
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for i in range(length))
 
@@ -86,10 +95,14 @@ def fetch_profile_description(user_id):
     try:
         response = requests.get(DESCRIPTION_ENDPOINT.format(user_id=user_id))
         if response.status_code == 200:
-            return response.json().get('description', '')
+            description = response.json().get('description', '')
+            print(f"Debug Info: Fetched Description: {description} for User ID: {user_id}")
+            return description
         else:
+            print(f"Debug Info: Failed to fetch description for User ID: {user_id}")
             return ""
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
+        print(f"Debug Info: Request Exception: {e}")
         return ""
 
 
