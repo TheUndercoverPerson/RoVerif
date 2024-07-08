@@ -3,38 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Profile Checker</title>
-    <!-- Include jQuery from CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Include your script.js -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <title>Roblox Verification</title>
 </head>
 <body>
-    <h1>Roblox Profile Checker</h1>
-    <form id="usernameForm">
-        <label for="username">Enter Your Roblox Username:</label><br>
-        <input type="text" id="username" name="username"><br><br>
-        <button type="submit" id="submitBtn">Submit</button>
+    <h1>Roblox Verification</h1>
+    <form action="/verify" method="post">
+        <label for="username">Enter your Roblox username:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+        <button type="submit">Verify</button>
     </form>
-
-    <button id="copyBtn">Copy to Clipboard</button><br><br>
-    <button id="searchProfileBtn">Search Profile</button><br><br>
-
-    <div id="result" style="display:none;">
-        <p>Generated String:</p>
-        <textarea id="generatedString" readonly></textarea><br>
-        <p id="verifyResult"></p>
-    </div>
-
-    <script>
-        // Function to copy generated string to clipboard
-        document.getElementById("copyBtn").addEventListener("click", function() {
-            var copyText = document.getElementById("generatedString");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); /* For mobile devices */
-            document.execCommand("copy");
-            alert("Copied the text: " + copyText.value);
-        });
-    </script>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 </body>
 </html>
