@@ -46,4 +46,4 @@ def verify_description(username, roblox_username):
     return False
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=4000)
