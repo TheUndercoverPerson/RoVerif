@@ -7,12 +7,10 @@
 </head>
 <body>
     <h1>Verify Roblox Account</h1>
-    <p>Please check your Roblox account for a verification token.</p>
     <p>Username: {{ username }}</p>
-    <p>Verification Token: {{ token }}</p>
-    <form action="/verify" method="post">
-        <label for="verification_code">Enter the verification code:</label><br>
-        <input type="text" id="verification_code" name="verification_code" required><br><br>
+    <p>Your verification token is: <strong>{{ token }}</strong></p>
+    <p>Please add this token to your Roblox profile and then click the button below to verify.</p>
+    <form action="/check_verification" method="post">
         <button type="submit">Verify</button>
     </form>
 </body>
