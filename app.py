@@ -4,7 +4,7 @@ import requests
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Change this to a secure random key
 
-ROBLOX_API_URL = 'https://api.roblox.com'
+API_ENDPOINT = "https://users.roblox.com/v1/usernames/users"
 
 
 @app.route('/')
@@ -16,10 +16,10 @@ def index():
 def verify():
     username = request.form['username']
     
-    # Fetch user data from Roblox API
-    user_data = fetch_user_data(username)
+    # Fetch user ID from Roblox API
+    user_id = fetch_user_id(username)
     
-    if user_data:
+    if user_id:
         # Generate a verification token (you can use a more secure method)
         verification_token = '123456'  # Change this to a secure method
         
@@ -29,15 +29,19 @@ def verify():
         # Render the verify template with username and token
         return render_template('verify.html', username=username, token=verification_token)
     else:
-        flash('User not found. Please enter a valid Roblox username.', 'error')
+        flash('User not found or banned. Please enter a valid Roblox username.', 'error')
         return redirect(url_for('index'))
 
 
-def fetch_user_data(username):
+def fetch_user_id(username):
+    request_payload = {
+        "usernames": [username],
+        "excludeBannedUsers": True
+    }
     try:
-        response = requests.get(f'{ROBLOX_API_URL}/users/get-by-username?username={username}')
-        if response.status_code == 200:
-            return response.json()
+        response = requests.post(API_ENDPOINT, json=request_payload)
+        if response.status_code == 200 and response.json()["data"]:
+            return response.json()["data"][0]["id"]
         else:
             return None
     except requests.exceptions.RequestException:
